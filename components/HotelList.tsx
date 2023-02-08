@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import styled from "@emotion/styled";
 import { Dummy_List } from "Dummy_List";
+import { useRouter } from "next/router";
 
 const Container = styled.div`
   display: flex;
@@ -41,7 +42,7 @@ const Container = styled.div`
   }
 `;
 
-const Button = styled.button`
+export const Button = styled.button`
   color: #fff;
   width: 8rem;
   height: 1.7rem;
@@ -72,6 +73,12 @@ interface Hotel {
 
 const HotelListItem = () => {
   const [hotelList, setHotelList] = useState<Hotel[]>();
+
+  const router = useRouter();
+
+  const moveToDetailPage = (id: number) => {
+    router.push(`/${id}`);
+  };
 
   // const params = {
   //   units: "metric",
@@ -112,6 +119,39 @@ const HotelListItem = () => {
   //   getHotelList();
   // }, []);
 
+  const params = {
+    checkin_date: "2023-07-15",
+    adults_number_by_rooms: "2,1",
+    units: "metric",
+    locale: "ko",
+    currency: "KRW",
+    hotel_id: 1778038,
+    checkout_date: "2023-07-16",
+    children_number_by_rooms: "2,0",
+    children_ages: "5,0",
+  };
+
+  const headers = {
+    "X-RapidAPI-Key": "896b2f10c7mshb4c2758bf8764f8p10746djsn3dbe7fc2c98d",
+    "X-RapidAPI-Host": "booking-com.p.rapidapi.com",
+  };
+
+  const getHotelDetail = async () => {
+    const res = await axios.get(
+      "https://booking-com.p.rapidapi.com/v1/hotels/room-list",
+      {
+        params: params,
+        headers: headers,
+      }
+    );
+
+    console.log(res.data[0]);
+  };
+
+  useEffect(() => {
+    getHotelDetail();
+  }, []);
+
   return (
     <>
       {Dummy_List?.map((item) => (
@@ -142,7 +182,9 @@ const HotelListItem = () => {
                   item.priceBreakdown.grossPrice.value
                 ).toLocaleString("ko-KR")}
               </div>
-              <Button>예약하기</Button>
+              <Button onClick={() => moveToDetailPage(item.id)}>
+                예약하기
+              </Button>
             </div>
           </div>
         </Container>
