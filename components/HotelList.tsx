@@ -2,7 +2,6 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import styled from "@emotion/styled";
-import { Dummy_List } from "Dummy_List";
 import { useRouter } from "next/router";
 
 const Container = styled.div`
@@ -66,9 +65,15 @@ const Score = styled.p`
 `;
 
 interface Hotel {
-  id: number;
-  name: string;
-  photoMainUrl: string;
+  hotel_id: number;
+  hotel_name_trans: string;
+  max_1440_photo_url: string;
+  review_score: number;
+  review_score_word: string;
+  review_nr: number;
+  price_breakdown: {
+    gross_price: string;
+  };
 }
 
 const HotelListItem = () => {
@@ -80,55 +85,22 @@ const HotelListItem = () => {
     router.push(`/${id}`);
   };
 
-  // const params = {
-  //   units: "metric",
-  //   checkin_date: "2023-02-18",
-  //   dest_type: "city",
-  //   dest_id: "-716583",
-  //   checkout_date: "2023-02-19",
-  //   order_by: "popularity",
-  //   filter_by_currency: "KRW",
-  //   locale: "ko",
-  //   adults_number: "2",
-  //   room_number: "1",
-  //   include_adjacency: "true",
-  //   categories_filter_ids: "class::2,class::4,free_cancellation::1",
-  //   children_number: "2",
-  //   children_ages: "5,0",
-  //   page_number: "0",
-  // };
-
-  // const headers = {
-  //   "X-RapidAPI-Key": "896b2f10c7mshb4c2758bf8764f8p10746djsn3dbe7fc2c98d",
-  //   "X-RapidAPI-Host": "booking-com.p.rapidapi.com",
-  // };
-
-  // const getHotelList = async () => {
-  //   const res = await axios.get(
-  //     "https://booking-com.p.rapidapi.com/v2/hotels/search",
-  //     {
-  //       params: params,
-  //       headers: headers,
-  //     }
-  //   );
-  //   setHotelList(res.data.results);
-  //   console.log(res.data.results);
-  // };
-
-  // useEffect(() => {
-  //   getHotelList();
-  // }, []);
-
   const params = {
-    checkin_date: "2023-07-15",
-    adults_number_by_rooms: "2,1",
+    dest_id: "254475",
+    order_by: "popularity",
+    filter_by_currency: "KRW",
+    adults_number: "2",
+    room_number: "1",
+    checkout_date: "2023-04-09",
     units: "metric",
+    checkin_date: "2023-04-08",
+    dest_type: "hotel",
     locale: "ko",
-    currency: "KRW",
-    hotel_id: 1778038,
-    checkout_date: "2023-07-16",
-    children_number_by_rooms: "2,0",
     children_ages: "5,0",
+    categories_filter_ids: "class::2,class::4,free_cancellation::1",
+    page_number: "0",
+    include_adjacency: "true",
+    children_number: "2",
   };
 
   const headers = {
@@ -136,53 +108,52 @@ const HotelListItem = () => {
     "X-RapidAPI-Host": "booking-com.p.rapidapi.com",
   };
 
-  const getHotelDetail = async () => {
+  const getHotelList = async () => {
     const res = await axios.get(
-      "https://booking-com.p.rapidapi.com/v1/hotels/room-list",
+      "https://booking-com.p.rapidapi.com/v1/hotels/search",
       {
         params: params,
         headers: headers,
       }
     );
-
-    console.log(res.data[0]);
+    setHotelList(res.data.result);
   };
 
   useEffect(() => {
-    getHotelDetail();
+    getHotelList();
   }, []);
 
   return (
     <>
-      {Dummy_List?.map((item) => (
-        <Container key={item.id}>
+      {hotelList?.map((item) => (
+        <Container key={item.hotel_id}>
           <div>
             <Image
-              src={item.photoMainUrl}
-              alt={item.name}
+              src={item.max_1440_photo_url}
+              alt={item.hotel_name_trans}
               width={200}
-              height={240}
+              height={220}
             />
           </div>
           <div className="content">
             <div className="header">
-              <h3>{item.name}</h3>
+              <h3>{item.hotel_name_trans}</h3>
               <div className="score-box">
                 <div>
-                  <div>{item.reviewScoreWord}</div>
-                  <span>{item.reviewCount}개의 후기</span>
+                  <div>{item.review_score_word}</div>
+                  <span>{item.review_nr}개의 후기</span>
                 </div>
-                <Score>{item.reviewScore}</Score>
+                <Score>{item.review_score}</Score>
               </div>
             </div>
             <div>
               <div>
                 ₩{" "}
-                {Math.round(
-                  item.priceBreakdown.grossPrice.value
-                ).toLocaleString("ko-KR")}
+                {parseInt(item.price_breakdown.gross_price).toLocaleString(
+                  "ko-KR"
+                )}
               </div>
-              <Button onClick={() => moveToDetailPage(item.id)}>
+              <Button onClick={() => moveToDetailPage(item.hotel_id)}>
                 예약하기
               </Button>
             </div>
@@ -192,5 +163,11 @@ const HotelListItem = () => {
     </>
   );
 };
+
+// export const getServerSideProps = async (context) => {
+//   return {
+//     props: {}
+//   }
+// }
 
 export default HotelListItem;
