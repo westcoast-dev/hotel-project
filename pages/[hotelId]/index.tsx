@@ -12,9 +12,21 @@ const Section = styled.section`
 `;
 
 const Container = styled.div`
+  width: 1374px;
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
+
+  .flex-wrap {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  @media screen and (max-width: 1406px) {
+    width: 916px;
+  }
+  @media screen and (max-width: 948px) {
+    width: 458px;
+  }
 `;
 
 const Content = styled.div`
@@ -22,7 +34,7 @@ const Content = styled.div`
   border: 1px solid #d7d4d2;
   border-radius: 0.5rem;
   overflow: hidden;
-
+  background-color: #fff;
   .box {
     margin: 1rem;
   }
@@ -47,26 +59,30 @@ const HotelDetailPage = ({ list }: any) => {
       </Head>
       <Section>
         <Container>
-          {list.block.map((item: Item) => (
-            <Content key={item.block_id}>
-              <Image
-                src={list.rooms[parseInt(item.block_id)].photos[0].url_original}
-                alt={item.room_name}
-                width={440}
-                height={360}
-              />
-              <div className="box">
-                <div>{item.room_name}</div>
-                <h3>
-                  ₩
-                  {item.product_price_breakdown.gross_amount.value.toLocaleString(
-                    "ko-KR"
-                  )}
-                </h3>
-                <Button>예약하기</Button>
-              </div>
-            </Content>
-          ))}
+          <div className="flex-wrap">
+            {list.block.map((item: Item) => (
+              <Content key={item.block_id}>
+                <Image
+                  src={
+                    list.rooms[parseInt(item.block_id)].photos[0].url_original
+                  }
+                  alt={item.room_name}
+                  width={440}
+                  height={360}
+                />
+                <div className="box">
+                  <div>{item.room_name}</div>
+                  <h3>
+                    ₩
+                    {item.product_price_breakdown.gross_amount.value.toLocaleString(
+                      "ko-KR"
+                    )}
+                  </h3>
+                  <Button>예약하기</Button>
+                </div>
+              </Content>
+            ))}
+          </div>
         </Container>
       </Section>
     </>
@@ -85,7 +101,8 @@ const HotelDetailPage = ({ list }: any) => {
 // export const getServerSideProps: GetServerSideProps = async (context) => {
 //   const hotelId = context.params?.hotelId as string;
 
-//   // axios로 데이터 페칭
+//   // 'https://booking-com.p.rapidapi.com/v1/hotels/description',
+//   //  params: {hotel_id: '1778038', locale: 'ko'},
 
 //   const params = {
 //     checkin_date: "2023-07-15",

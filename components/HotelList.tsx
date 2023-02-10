@@ -7,7 +7,14 @@ import { useRouter } from "next/router";
 const Container = styled.div`
   display: flex;
   margin: 1rem 0;
+  border: 1px solid #d7d4d2;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background-color: #fff;
 
+  .img-box {
+    display: flex;
+  }
   .content {
     width: 100%;
     padding: 1rem 1.5rem;
@@ -127,7 +134,7 @@ const HotelListItem = () => {
     <>
       {hotelList?.map((item) => (
         <Container key={item.hotel_id}>
-          <div>
+          <div className="img-box">
             <Image
               src={item.max_1440_photo_url}
               alt={item.hotel_name_trans}
