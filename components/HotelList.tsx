@@ -94,13 +94,13 @@ const HotelListItem = () => {
 
   const params = {
     dest_id: "254475",
-    order_by: "popularity",
+    order_by: "class_descending",
     filter_by_currency: "KRW",
     adults_number: "2",
     room_number: "1",
-    checkout_date: "2023-04-09",
+    checkout_date: "2023-07-16",
     units: "metric",
-    checkin_date: "2023-04-08",
+    checkin_date: "2023-07-15",
     dest_type: "hotel",
     locale: "ko",
     children_ages: "5,0",
