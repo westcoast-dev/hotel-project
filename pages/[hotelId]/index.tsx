@@ -63,9 +63,8 @@ interface facility {
 }
 
 const HotelDetailPage = ({ list, name, photo, desc, facilities }: any) => {
-  // facilities.map((item: facility) => {
-  //   console.log(item.facility_name);
-  // });
+  console.log();
+
   return (
     <>
       <Head>
@@ -117,15 +116,6 @@ const HotelDetailPage = ({ list, name, photo, desc, facilities }: any) => {
     </>
   );
 };
-// const HotelDetailPage = ({ room_name, price, description }: Detail) => {
-//   return (
-//     <div>
-//       <div>{room_name}</div>
-//       <div>{price}</div>
-//       <div>{description}</div>
-//     </div>
-//   );
-// };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const hotelId = context.params?.hotelId as string;
@@ -179,10 +169,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       }
     );
 
+    const photo = await axios.get(
+      "https://booking-com.p.rapidapi.com/v1/hotels/photos",
+      {
+        params: { locale: "ko", hotel_id: hotelId },
+        headers: headers,
+      }
+    );
+
     return {
       props: {
         name: res_data.data.name,
-        photo: res_data.data.main_photo_url,
+        photo: photo.data[0].url_1440,
         desc: res_desc.data.description,
         facilities: res_facil.data,
         list: res.data[0],
@@ -194,37 +192,5 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 };
-
-// export const getStaticPaths = async () => {
-//   return {
-//     paths: [
-//       {
-//         params: {
-//           hotelId: "1778038",
-//         },
-//       },
-//     ],
-//     fallback: false,
-//   };
-// };
-
-// export const getStaticProps: GetStaticProps = async (context) => {
-//   const hotelId = context.params?.hotelId as string;
-
-//   const list = Room_List;
-
-//   const data = Room_List.block[0];
-//   const rooms = Room_List.rooms;
-
-//   return {
-//     props: {
-//       block_id: data.block_id.split("_", 1),
-//       room_name: data.name,
-//       price: data.product_price_breakdown.gross_amount.value,
-//       rooms: rooms,
-//       list: list,
-//     },
-//   };
-// };
 
 export default HotelDetailPage;
