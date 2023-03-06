@@ -38,6 +38,12 @@ const Content = styled.div`
   .box {
     margin: 1rem;
   }
+
+  @media screen and (max-width: 458px) {
+    max-width: 360px;
+    margin: auto;
+    margin-bottom: 0.5rem;
+  }
 `;
 
 const List = styled.div`
