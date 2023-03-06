@@ -4,7 +4,6 @@ import axios from "axios";
 import Image from "next/image";
 import styled from "@emotion/styled";
 import { Button } from "@/components/HotelList";
-import { Room_List } from "Room_List";
 
 const Section = styled.section`
   display: flex;
@@ -54,6 +53,7 @@ const List = styled.div`
 interface Item {
   block_id: string;
   room_name: string;
+  photo: string;
   product_price_breakdown: { gross_amount: { value: number } };
   rooms: { [block_id: number]: { photos: [{ url_original: string }] } };
 }
@@ -62,15 +62,22 @@ interface facility {
   facility_name: string;
 }
 
-const HotelDetailPage = ({ list, name, desc, facilities }: any) => {
-  facilities.map((item: facility) => {
-    console.log(item.facility_name);
-  });
+const HotelDetailPage = ({ list, name, photo, desc, facilities }: any) => {
+  // facilities.map((item: facility) => {
+  //   console.log(item.facility_name);
+  // });
   return (
     <>
       <Head>
         <title>{name}</title>
         <meta name="description" content={desc} />
+        <meta property="og:title" content={name} />
+        <meta property="og:description" content={desc} />
+        <meta
+          property="og:url"
+          content={`https://hotel-project-westcoast.vercel.app/${list.hotel_id}`}
+        />
+        <meta property="og:image" content={photo} />
       </Head>
       <h1>{name}</h1>
       <div>{desc}</div>
@@ -175,6 +182,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       props: {
         name: res_data.data.name,
+        photo: res_data.data.main_photo_url,
         desc: res_desc.data.description,
         facilities: res_facil.data,
         list: res.data[0],
