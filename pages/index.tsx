@@ -16,7 +16,7 @@ const Container = styled.div`
 export default function Home() {
   return (
     <>
-      <Header>hotel booking</Header>
+      <Header>Woochan&apos;s.Com</Header>
       <Container>
         <HotelList />
       </Container>

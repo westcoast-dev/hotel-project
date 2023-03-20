@@ -1,20 +1,18 @@
+import styled from "@emotion/styled";
 import { GoogleMap, LoadScript, MarkerF } from "@react-google-maps/api";
 
 const containerStyle = {
-  width: "240px",
-  height: "240px",
-};
-
-const center = {
-  lat: 37.5645006108251,
-  lng: 126.991000073031,
+  width: "280px",
+  height: "280px",
 };
 
 interface MapProps {
   title: string;
+  location: { latitude: number; longitude: number };
 }
 
-const GoogleMaps = ({ title }: MapProps) => {
+const GoogleMaps = ({ title, location }: MapProps) => {
+  const center = { lat: location.latitude, lng: location.longitude };
   const key: string = process.env.NEXT_PUBLIC_GOOGLE_MAPS_APIKEY || "";
   return (
     <LoadScript googleMapsApiKey={key}>
