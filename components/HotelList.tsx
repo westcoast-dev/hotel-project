@@ -72,63 +72,65 @@ const Score = styled.p`
 `;
 
 interface Hotel {
-  hotel_id: number;
-  hotel_name_trans: string;
-  max_1440_photo_url: string;
-  review_score: number;
-  review_score_word: string;
-  review_nr: number;
-  price_breakdown: {
-    gross_price: string;
-  };
+  hotelList: [
+    {
+      hotel_id: number;
+      hotel_name_trans: string;
+      max_1440_photo_url: string;
+      review_score: number;
+      review_score_word: string;
+      review_nr: number;
+      price_breakdown: {
+        gross_price: string;
+      };
+    }
+  ];
 }
 
-const HotelListItem = () => {
-  const [hotelList, setHotelList] = useState<Hotel[]>();
-
+const HotelListItem = ({ hotelList }: Hotel) => {
   const router = useRouter();
 
   const moveToDetailPage = (id: number) => {
     router.push(`/${id}`);
   };
 
-  const params = {
-    dest_id: "254475",
-    order_by: "class_descending",
-    filter_by_currency: "KRW",
-    adults_number: "2",
-    room_number: "1",
-    checkout_date: "2023-07-16",
-    units: "metric",
-    checkin_date: "2023-07-15",
-    dest_type: "hotel",
-    locale: "ko",
-    children_ages: "5,0",
-    categories_filter_ids: "class::2,class::4,free_cancellation::1",
-    page_number: "0",
-    include_adjacency: "true",
-    children_number: "2",
-  };
+  // const params = {
+  //   dest_id: des.des.dest_id,
+  //   dest_type: des.des.dest_type,
+  //   adults_number: "2",
+  //   checkin_date: "2023-07-15",
+  //   checkout_date: "2023-07-16",
+  //   order_by: "class_descending",
+  //   filter_by_currency: "KRW",
+  //   room_number: "1",
+  //   units: "metric",
+  //   locale: "ko",
+  //   children_ages: "5,0",
+  //   categories_filter_ids: "class::2,class::4,free_cancellation::1",
+  //   page_number: "0",
+  //   include_adjacency: "true",
+  //   children_number: "2",
+  // };
 
-  const headers = {
-    "X-RapidAPI-Key": "896b2f10c7mshb4c2758bf8764f8p10746djsn3dbe7fc2c98d",
-    "X-RapidAPI-Host": "booking-com.p.rapidapi.com",
-  };
+  // const headers = {
+  //   "X-RapidAPI-Key": "896b2f10c7mshb4c2758bf8764f8p10746djsn3dbe7fc2c98d",
+  //   "X-RapidAPI-Host": "booking-com.p.rapidapi.com",
+  // };
 
-  const getHotelList = async () => {
-    const res = await axios.get(
-      "https://booking-com.p.rapidapi.com/v1/hotels/search",
-      {
-        params: params,
-        headers: headers,
-      }
-    );
-    setHotelList(res.data.result);
-  };
+  // const getHotelList = async () => {
+  //   const res = await axios.get(
+  //     "https://booking-com.p.rapidapi.com/v1/hotels/search",
+  //     {
+  //       params: params,
+  //       headers: headers,
+  //     }
+  //   );
+  //   setHotelList(res.data.result);
+  // };
 
-  useEffect(() => {
-    getHotelList();
-  }, []);
+  // useEffect(() => {
+  //   getHotelList();
+  // }, []);
 
   return (
     <>

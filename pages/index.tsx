@@ -9,11 +9,28 @@ const Container = styled.div`
   margin-top: 2rem;
   width: 50rem;
 `;
-export default function Home() {
+
+interface HomeProps {
+  hotelList: [
+    {
+      hotel_id: number;
+      hotel_name_trans: string;
+      max_1440_photo_url: string;
+      review_score: number;
+      review_score_word: string;
+      review_nr: number;
+      price_breakdown: {
+        gross_price: string;
+      };
+    }
+  ];
+}
+
+export default function Home({ hotelList }: HomeProps) {
   return (
     <>
       <Container>
-        <HotelList />
+        <HotelList hotelList={hotelList} />
       </Container>
     </>
   );

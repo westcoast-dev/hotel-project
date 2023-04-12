@@ -3,6 +3,7 @@ import type { AppProps } from "next/app";
 import styled from "@emotion/styled";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 const Nav = styled.nav`
   display: flex;
@@ -13,6 +14,7 @@ const Nav = styled.nav`
     color: #fff;
     font-size: 1.6rem;
     margin: 0 1rem;
+    cursor: pointer;
   }
   input {
     font-size: 1rem;
@@ -37,13 +39,55 @@ const Nav = styled.nav`
   }
 `;
 
+interface Hotel {
+  hotel_id: number;
+  hotel_name_trans: string;
+  max_1440_photo_url: string;
+  review_score: number;
+  review_score_word: string;
+  review_nr: number;
+  price_breakdown: {
+    gross_price: string;
+  };
+}
+
 export default function App({ Component, pageProps }: AppProps) {
+  const router = useRouter();
   const [search, setSearch] = useState<string>();
+  const [hotelList, setHotelList] = useState<Hotel[]>();
   const headers = {
     "X-RapidAPI-Key": "896b2f10c7mshb4c2758bf8764f8p10746djsn3dbe7fc2c98d",
     "X-RapidAPI-Host": "booking-com.p.rapidapi.com",
   };
   const params = { name: search, locale: "ko" };
+
+  const getHotelList = async (des: any) => {
+    const body = {
+      dest_id: des.dest_id,
+      dest_type: des.dest_type,
+      adults_number: "2",
+      checkin_date: "2023-07-15",
+      checkout_date: "2023-07-16",
+      order_by: "class_descending",
+      filter_by_currency: "KRW",
+      room_number: "1",
+      units: "metric",
+      locale: "ko",
+      children_ages: "5,0",
+      categories_filter_ids: "class::2,class::4,free_cancellation::1",
+      page_number: "0",
+      include_adjacency: "true",
+      children_number: "2",
+    };
+    const res = await axios.get(
+      "https://booking-com.p.rapidapi.com/v1/hotels/search",
+      {
+        params: body,
+        headers: headers,
+      }
+    );
+    setHotelList(res.data.result);
+  };
 
   const searchLocation = async () => {
     const res = await axios.get(
@@ -53,11 +97,13 @@ export default function App({ Component, pageProps }: AppProps) {
         headers: headers,
       }
     );
-    console.log(res.data);
+    const des = {
+      dest_id: res.data[0].dest_id,
+      dest_type: res.data[0].dest_type,
+    };
+    router.pathname !== "/" && router.push("/");
+    getHotelList(des);
   };
-  useEffect(() => {
-    if (search) searchLocation();
-  }, [search]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -66,7 +112,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Nav>
-        <div>Woochans.com</div>
+        <div onClick={() => router.push("/")}>Woochans.com</div>
         <input
           style={{ width: "18rem" }}
           type="text"
@@ -75,9 +121,9 @@ export default function App({ Component, pageProps }: AppProps) {
         />
         <input style={{ width: "12rem" }} type="text" placeholder="날짜" />
         <input style={{ width: "12rem" }} type="text" placeholder="인원수" />
-        <button>검색</button>
+        <button onClick={searchLocation}>검색</button>
       </Nav>
-      <Component {...pageProps} />
+      <Component {...pageProps} hotelList={hotelList} />
     </>
   );
 }
