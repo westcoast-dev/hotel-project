@@ -2,7 +2,7 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import styled from "@emotion/styled";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
 const Nav = styled.nav`
@@ -39,6 +39,32 @@ const Nav = styled.nav`
   }
 `;
 
+const SearchList = styled.ul`
+  position: absolute;
+  padding-left: 0 !important;
+  margin: 0;
+  color: black;
+  top: 60px;
+  left: 228px;
+  padding-left: 8px;
+  background-color: #fff;
+  width: 24rem;
+  box-shadow: 0px 2px 16px 0px rgba(0, 0, 0, 0.24);
+  border-radius: 4px;
+
+  li {
+    list-style: none;
+    padding: 8px;
+    min-height: 36px;
+    line-height: 36px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.06);
+    }
+  }
+`;
+
 interface Hotel {
   hotel_id: number;
   hotel_name_trans: string;
@@ -50,16 +76,29 @@ interface Hotel {
     gross_price: string;
   };
 }
+interface SearchList {
+  name: string;
+  dest_id: string;
+  dest_type: string;
+}
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [search, setSearch] = useState<string>();
   const [hotelList, setHotelList] = useState<Hotel[]>();
+  const [searchList, setSearchList] = useState<SearchList[]>([]);
+  const [show, setShow] = useState(false);
   const headers = {
     "X-RapidAPI-Key": "896b2f10c7mshb4c2758bf8764f8p10746djsn3dbe7fc2c98d",
     "X-RapidAPI-Host": "booking-com.p.rapidapi.com",
   };
   const params = { name: search, locale: "ko" };
+
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  const showList = (e: any) => {
+    searchRef.current === e.target ? setShow(true) : setShow(false);
+  };
 
   const getHotelList = async (des: any) => {
     const body = {
@@ -90,6 +129,7 @@ export default function App({ Component, pageProps }: AppProps) {
   };
 
   const searchLocation = async () => {
+    if (search === undefined || search.length <= 1) return;
     const res = await axios.get(
       "https://booking-com.p.rapidapi.com/v1/hotels/locations",
       {
@@ -97,33 +137,69 @@ export default function App({ Component, pageProps }: AppProps) {
         headers: headers,
       }
     );
-    const des = {
-      dest_id: res.data[0].dest_id,
-      dest_type: res.data[0].dest_type,
-    };
-    router.pathname !== "/" && router.push("/");
-    getHotelList(des);
+    // const des = {
+    //   dest_id: res.data[0].dest_id,
+    //   dest_type: res.data[0].dest_type,
+    // };
+    setSearchList(res.data);
+    console.log(res.data);
+    // console.log(res.data);
+    // router.pathname !== "/" && router.push("/");
+    // getHotelList(des);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value);
+    if (e.target.value.length >= 2) {
+      setSearch(e.target.value);
+    }
+    if (e.target.value.length === 0) {
+      setSearch("");
+    }
+    // setSearch(e.target.value);
   };
 
+  useEffect(() => {
+    searchLocation();
+  }, [search]);
+
+  //검색어에 2글자 이상 입력하면 검색결과 드롭다운
+  //페이지네이션 : total_count_with_filters / 20
+
   return (
-    <>
+    <div onClick={showList}>
       <Nav>
         <div onClick={() => router.push("/")}>Woochans.com</div>
         <input
+          ref={searchRef}
           style={{ width: "18rem" }}
           type="text"
           placeholder="목적지"
           onChange={handleChange}
         />
+        {show && (
+          <SearchList>
+            {(search === undefined || search.length <= 1) && (
+              <div style={{ color: "#000" }}>
+                목적지, 숙소 또는 랜드마크로 검색해 보세요.
+              </div>
+            )}
+            {searchList.map((item) => (
+              <li key={item.dest_id}>{item.name}</li>
+            ))}
+            {/* <li>애월</li>
+            <li>애월스테이</li>
+            <li>애월읍</li> */}
+          </SearchList>
+        )}
         <input style={{ width: "12rem" }} type="text" placeholder="날짜" />
         <input style={{ width: "12rem" }} type="text" placeholder="인원수" />
-        <button onClick={searchLocation}>검색</button>
+        <button
+        // onClick={searchLocation}
+        >
+          검색
+        </button>
       </Nav>
       <Component {...pageProps} hotelList={hotelList} />
-    </>
+    </div>
   );
 }
