@@ -1,16 +1,17 @@
-import "@/styles/globals.css";
-import type { AppProps } from "next/app";
-import styled from "@emotion/styled";
-import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import type { AppProps } from "next/app";
+import "@/styles/globals.css";
+import axios from "axios";
+import styled from "@emotion/styled";
+import { ImSearch } from "react-icons/im";
 
 const Nav = styled.nav`
   display: flex;
   padding: 1rem;
   background-color: #241e92;
 
-  div {
+  .logo {
     color: #fff;
     font-size: 1.6rem;
     margin: 0 1rem;
@@ -63,6 +64,44 @@ const SearchList = styled.ul`
       background-color: rgba(0, 0, 0, 0.06);
     }
   }
+`;
+
+const MainImage = styled.div`
+  margin: auto;
+  margin-top: 40px;
+  width: 100%;
+  height: 540px;
+  max-width: 75rem;
+  border-radius: 6px;
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    url("/roadtrip.jpg") center;
+  background-size: cover;
+  background-color: rgba(0, 11, 38, 0.5);
+
+  .content {
+    position: absolute;
+    right: 200px;
+    top: 300px;
+    line-height: 30px;
+    width: 420px;
+    color: #fff;
+    font-size: 1.2rem;
+    p {
+      margin: 0;
+    }
+  }
+`;
+
+const Button = styled.button`
+  width: 220px;
+  margin: 18px 0 0 190px;
+  padding: 8px 20px;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  background-color: #7b6cf6;
 `;
 
 interface Hotel {
@@ -159,7 +198,7 @@ export default function App({ Component, pageProps }: AppProps) {
   };
 
   useEffect(() => {
-    searchLocation();
+    // searchLocation();
   }, [search]);
 
   //검색어에 2글자 이상 입력하면 검색결과 드롭다운
@@ -168,7 +207,9 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <div onClick={showList}>
       <Nav>
-        <div onClick={() => router.push("/")}>Woochans.com</div>
+        <div className="logo" onClick={() => router.push("/")}>
+          Woochans.com
+        </div>
         <input
           ref={searchRef}
           style={{ width: "18rem" }}
@@ -178,9 +219,13 @@ export default function App({ Component, pageProps }: AppProps) {
         />
         {show && (
           <SearchList>
-            {(search === undefined || search.length <= 1) && (
-              <div style={{ color: "#000" }}>
-                목적지, 숙소 또는 랜드마크로 검색해 보세요.
+            {/* {(search === undefined || search.length <= 1) && ( */}
+            {searchList.length === 0 && (
+              <div style={{ textAlign: "center", margin: "40px 0" }}>
+                <ImSearch size={32} />
+                <div style={{ color: "#333333", marginTop: "16px" }}>
+                  목적지, 숙소 또는 랜드마크로 검색해 보세요.
+                </div>
               </div>
             )}
             {searchList.map((item) => (
@@ -199,6 +244,17 @@ export default function App({ Component, pageProps }: AppProps) {
           검색
         </button>
       </Nav>
+      {searchList.length === 0 && (
+        <MainImage>
+          <div className="content">
+            <p>
+              Woochans.com 회원은 전 세계 수천 개 호텔을 할인된 가격으로 이용할
+              수 있습니다
+            </p>
+            <Button>가입하기</Button>
+          </div>
+        </MainImage>
+      )}
       <Component {...pageProps} hotelList={hotelList} />
     </div>
   );
