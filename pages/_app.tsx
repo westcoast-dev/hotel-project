@@ -14,6 +14,7 @@ const Nav = styled.nav`
   .logo {
     color: #fff;
     font-size: 1.6rem;
+    font-weight: 700;
     margin: 0 1rem;
     cursor: pointer;
   }
@@ -28,6 +29,20 @@ const Nav = styled.nav`
     padding-left: 0.3rem;
     color: #20263a;
   }
+  .login {
+    font-family: "Noto Sans KR", sans-serif;
+    margin: 0;
+    padding: 0.4rem 0.7rem;
+    color: #fff;
+    font-size: 16px;
+    background-color: transparent;
+    border-radius: 4px;
+
+    &:hover {
+      color: #ccc7f6;
+    }
+  }
+
   button {
     background-color: #7b6cf6;
     margin: 0 0.8rem;
@@ -46,7 +61,7 @@ const SearchList = styled.ul`
   margin: 0;
   color: black;
   top: 60px;
-  left: 228px;
+  left: 236px;
   padding-left: 8px;
   background-color: #fff;
   width: 24rem;
@@ -94,7 +109,7 @@ const MainImage = styled.div`
 
 const Button = styled.button`
   width: 220px;
-  margin: 18px 0 0 190px;
+  margin: 24px 0 0 190px;
   padding: 8px 20px;
   color: #fff;
   font-size: 16px;
@@ -117,7 +132,7 @@ interface Hotel {
 }
 interface SearchList {
   name: string;
-  dest_id: string;
+  dest_id: number;
   dest_type: string;
 }
 
@@ -125,6 +140,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [search, setSearch] = useState<string>();
   const [hotelList, setHotelList] = useState<Hotel[]>();
+  const [des, setDes] = useState({ dest_id: 0, dest_type: "" });
   const [searchList, setSearchList] = useState<SearchList[]>([]);
   const [show, setShow] = useState(false);
   const headers = {
@@ -197,6 +213,11 @@ export default function App({ Component, pageProps }: AppProps) {
     // setSearch(e.target.value);
   };
 
+  const handleDestination = (item: SearchList) => {
+    setSearch(item.name);
+    setDes({ dest_id: item.dest_id, dest_type: item.dest_type });
+  };
+
   useEffect(() => {
     // searchLocation();
   }, [search]);
@@ -214,6 +235,7 @@ export default function App({ Component, pageProps }: AppProps) {
           ref={searchRef}
           style={{ width: "18rem" }}
           type="text"
+          value={search}
           placeholder="목적지"
           onChange={handleChange}
         />
@@ -229,7 +251,9 @@ export default function App({ Component, pageProps }: AppProps) {
               </div>
             )}
             {searchList.map((item) => (
-              <li key={item.dest_id}>{item.name}</li>
+              <li key={item.dest_id} onClick={() => handleDestination(item)}>
+                {item.name}
+              </li>
             ))}
             {/* <li>애월</li>
             <li>애월스테이</li>
@@ -239,12 +263,16 @@ export default function App({ Component, pageProps }: AppProps) {
         <input style={{ width: "12rem" }} type="text" placeholder="날짜" />
         <input style={{ width: "12rem" }} type="text" placeholder="인원수" />
         <button
-        // onClick={searchLocation}
+        // onClick={() => getHotelList(des)}
         >
           검색
         </button>
+        <div style={{ marginLeft: "80px" }}>
+          <button className="login">가입하기</button>
+          <button className="login">로그인</button>
+        </div>
       </Nav>
-      {searchList.length === 0 && (
+      {hotelList === undefined && (
         <MainImage>
           <div className="content">
             <p>
