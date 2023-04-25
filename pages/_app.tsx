@@ -138,7 +138,7 @@ interface SearchList {
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const [search, setSearch] = useState<string>();
+  const [search, setSearch] = useState<string>("");
   const [hotelList, setHotelList] = useState<Hotel[]>();
   const [des, setDes] = useState({ dest_id: 0, dest_type: "" });
   const [searchList, setSearchList] = useState<SearchList[]>([]);
@@ -192,25 +192,13 @@ export default function App({ Component, pageProps }: AppProps) {
         headers: headers,
       }
     );
-    // const des = {
-    //   dest_id: res.data[0].dest_id,
-    //   dest_type: res.data[0].dest_type,
-    // };
+
     setSearchList(res.data);
     console.log(res.data);
-    // console.log(res.data);
-    // router.pathname !== "/" && router.push("/");
-    // getHotelList(des);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value.length >= 2) {
-      setSearch(e.target.value);
-    }
-    if (e.target.value.length === 0) {
-      setSearch("");
-    }
-    // setSearch(e.target.value);
+    setSearch(e.target.value);
   };
 
   const handleDestination = (item: SearchList) => {
@@ -219,7 +207,12 @@ export default function App({ Component, pageProps }: AppProps) {
   };
 
   useEffect(() => {
-    // searchLocation();
+    const debounce = setTimeout(() => {
+      if (search) searchLocation();
+    }, 300);
+    return () => {
+      clearTimeout(debounce);
+    };
   }, [search]);
 
   //검색어에 2글자 이상 입력하면 검색결과 드롭다운
@@ -228,7 +221,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <div onClick={showList}>
       <Nav>
-        <div className="logo" onClick={() => router.push("/")}>
+        <div className="logo" onClick={() => window.location.assign("/")}>
           Woochans.com
         </div>
         <input
@@ -255,18 +248,11 @@ export default function App({ Component, pageProps }: AppProps) {
                 {item.name}
               </li>
             ))}
-            {/* <li>애월</li>
-            <li>애월스테이</li>
-            <li>애월읍</li> */}
           </SearchList>
         )}
         <input style={{ width: "12rem" }} type="text" placeholder="날짜" />
         <input style={{ width: "12rem" }} type="text" placeholder="인원수" />
-        <button
-        // onClick={() => getHotelList(des)}
-        >
-          검색
-        </button>
+        <button onClick={() => getHotelList(des)}>검색</button>
         <div style={{ marginLeft: "80px" }}>
           <button className="login">가입하기</button>
           <button className="login">로그인</button>
